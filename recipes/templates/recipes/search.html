@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        function openModal(recipe) {
+            document.getElementById("modal-title").innerText = recipe.title;
+            document.getElementById("modal-ingredients").innerHTML = recipe.ingredients.split("|").map(ingredient => `<li>${ingredient}</li>`).join("");
+            document.getElementById("modal-instructions").innerHTML = recipe.instructions.split(".").map(step => `<li>${step.trim()}.</li>`).join("");
+            document.getElementById("modal-servings").innerText = recipe.servings;
+            document.getElementById("recipe-modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("recipe-modal").classList.add("hidden");
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-r from-purple-200 via-purple-100 to-purple-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="w-full bg-purple-700 p-6 text-white text-center">
+        <h1 class="text-3xl font-bold">Recipe Finder</h1>
+        <p class="text-md mt-1">Discover delicious recipes by searching ingredients or recipe names</p>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto py-10 flex flex-col items-center">
+        <!-- Search Bar -->
+        <div class="w-full max-w-3xl mx-auto shadow-lg rounded-lg overflow-hidden bg-white flex mb-10">
+            <form method="get" action="" class="w-full flex">
+                <input 
+                    type="text" 
+                    name="ingredient" 
+                    placeholder="Search for a recipe or ingredient..." 
+                    class="w-full p-4 text-lg rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-700"
+                >
+                <button 
+                    type="submit" 
+                    class="p-4 bg-purple-600 hover:bg-purple-700 text-white rounded-r-lg flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 50 50" fill="white">
+                        <path d="M 21 3 C 11.601563 3 4 10.601563 4 20 C 4 29.398438 11.601563 37 21 37 C 24.355469 37 27.460938 36.015625 30.09375 34.34375 L 42.375 46.625 L 46.625 42.375 L 34.5 30.28125 C 36.679688 27.421875 38 23.878906 38 20 C 38 10.601563 30.398438 3 21 3 Z M 21 7 C 28.199219 7 34 12.800781 34 20 C 34 27.199219 28.199219 33 21 33 C 13.800781 33 8 27.199219 8 20 C 8 12.800781 13.800781 7 21 7 Z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Recipe Cards -->
+        {% if recipes %}
+            <div class="w-full max-w-2xl grid grid-cols-1 gap-6 px-4">
+                {% for recipe in recipes %}
+                    <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow flex justify-between items-center transform hover:-translate-y-1 transition duration-200 ease-in-out">
+                        <h3 class="text-xl font-bold text-gray-800">{{ recipe.title }}</h3>
+                        <button 
+                            onclick="openModal({{ recipe|safe }})" 
+                            class="bg-purple-500 text-white p-2 rounded-lg hover:bg-purple-600 transition-colors">
+                            View Recipe
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-600 mt-6">No recipes found. Try searching for another ingredient.</p>
+        {% endif %}
+    </div>
+
+    <!-- Modal -->
+    <div id="recipe-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg w-11/12 md:w-1/2 h-[50vh] max-h-[50vh] overflow-y-auto p-6 relative">
+            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+            <h3 id="modal-title" class="text-2xl font-bold text-gray-800 text-center mb-4"></h3>
+            
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Ingredients Section -->
+                <div class="w-full md:w-1/2">
+                    <h4 class="text-lg font-semibold text-gray-700">Ingredients:</h4>
+                    <ul id="modal-ingredients" class="list-disc list-inside text-gray-600 text-sm mt-2"></ul>
+                </div>
+    
+                <!-- Instructions Section -->
+                <div class="w-full md:w-1/2">
+                    <h4 class="text-lg font-semibold text-gray-700">Instructions:</h4>
+                    <ul id="modal-instructions" class="list-decimal list-inside text-gray-600 text-sm mt-2"></ul>
+                </div>
+            </div>
+    
+            <!-- Servings Info -->
+            <p class="text-gray-700 font-medium mt-4 text-center">
+                <strong>Servings:</strong> <span id="modal-servings"></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full bg-purple-700 p-6 text-center text-white mt-10">
+        <p>&copy; 2024 Recipe Finder. All rights reserved.</p>
+        <p class="text-sm">Crafted with care and flavor.</p>
+    </footer>
+
+</body>
+</html>
